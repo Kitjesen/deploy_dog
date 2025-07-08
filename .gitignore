@@ -1,0 +1,179 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vs/
+*.code-workspace
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+*.log
+logs/
+*.tmp
+*.temp
+*.pid
+*.out
+
+# Model files (large files)
+*.pt
+*.pth
+*.onnx
+*.pkl
+*.h5
+*.pb
+exported/
+models/
+checkpoints/
+
+# Data files
+*.csv
+*.json
+data/
+datasets/
+recordings/
+*.bag
+*.rosbag
+
+# Media files (if large)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+
+# Robot-specific files
+# Hardware calibration data
+calibration_data/
+*.cal
+*.calib
+
+# Robot configuration backups
+config_backup/
+*.yaml.bak
+*.config.bak
+
+# Runtime generated files
+runtime_logs/
+performance_data/
+system_stats/
+*.stats
+
+# Hardware interface files
+/dev/
+*.device
+hardware_cache/
+
+# Simulation files
+gazebo_logs/
+*.world.bak
+*.urdf.bak
+
+# ROS (if applicable)
+devel/
+build/
+msg_gen/
+srv_gen/
+msg/*Action.msg
+msg/*ActionFeedback.msg
+msg/*ActionGoal.msg
+msg/*ActionResult.msg
+msg/*Feedback.msg
+msg/*Goal.msg
+msg/*Result.msg
+msg/_*.py
+build_isolated/
+devel_isolated/
+
+# CMake (for C++ components)
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# Documentation build
+docs/_build/
+site/
+
+# Secrets and sensitive data
+*.pem
+*.key
+secrets/
+.secrets
+*.env.local
+*.env.production
+*.env.staging
+
+# Backup files
+*.bak
+*.backup
+*.orig
+*~ 

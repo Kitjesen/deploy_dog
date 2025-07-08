@@ -1,0 +1,124 @@
+robot:
+  joint_names:
+  - FL_hip_joint
+  - FL_thigh_joint
+  - FL_calf_joint
+  - FR_hip_joint
+  - FR_thigh_joint
+  - FR_calf_joint
+  - RL_hip_joint
+  - RL_thigh_joint
+  - RL_calf_joint
+  - RR_hip_joint
+  - RR_thigh_joint
+  - RR_calf_joint
+  - FL_foot_joint
+  - FR_foot_joint
+  - RL_foot_joint
+  - RR_foot_joint
+  default_joint_pos:
+  - 0.0
+  - 0.7
+  - -1.5
+  - 0.0
+  - -0.7
+  - 1.5
+  - 0.0
+  - -0.7
+  - 1.5
+  - 0.0
+  - 0.7
+  - -1.5
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  control_frequency: 50.0
+  policy_frequency: 50.0
+observations:
+  scales:
+    base_ang_vel: 0.25
+    projected_gravity: 1.0
+    velocity_commands: 1.0
+    joint_pos: 1.0
+    joint_vel: 0.05
+    actions: 1.0
+  clip_range:
+  - -100.0
+  - 100.0
+  observation_dim: 57
+actions:
+  scales:
+    hip_joints: 0.125
+    other_joints: 0.25
+    wheel_joints: 5.0
+  clip_range:
+  - -1.0
+  - 1.0
+  action_dim: 16
+safety:
+  joint_pos_limits:
+    hip:
+    - -0.6
+    - 0.6
+    thigh:
+    - -3.14159
+    - 3.14159
+    calf:
+    - -3.14159
+    - 3.14159
+    wheel:
+    - -1000.0
+    - 1000.0
+  joint_vel_limits:
+    leg:
+    - -21.0
+    - 21.0
+    wheel:
+    - -20.4
+    - 20.4
+  max_position_error: 0.5
+  max_velocity: 25.0
+  emergency_stop_enabled: true
+commands:
+  default_lin_vel_x: 0.0
+  default_lin_vel_y: 0.0
+  default_ang_vel_z: 0.0
+  max_lin_vel_x: 1.5
+  max_lin_vel_y: 0.8
+  max_ang_vel_z: 1.5
+state_receiver:
+  receive_frequency: 200
+  motor_server_host: 192.168.66.159
+  motor_server_port: 12345
+  buffer_size: 100
+  receive_timeout: 0.1
+control:
+  pd_gains:
+    kp:
+    - 80
+    - 80
+    - 80
+    kd:
+    - 4
+    - 4
+    - 4
+    wheel_kp: 30.0
+    wheel_kd: 1.0
+imu:
+  enabled: true
+  serial_port: /dev/ttyUSB0
+  baud_rate: 115200
+  update_frequency: 200
+  buffer_size: 100
+  data_timeout: 0.5
+  validate_data: true
+_comments:
+  robot: Robot joint configuration and control frequencies
+  observations: Observation processing scales and dimensions
+  actions: Action processing scales and limits
+  safety: Safety limits and emergency stop settings
+  commands: Velocity command limits and defaults
+  control: PD control gains
+  state_receiver: Motor state receiving configuration
+  imu: IMU interface configuration

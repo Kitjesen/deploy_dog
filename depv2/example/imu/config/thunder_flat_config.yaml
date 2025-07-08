@@ -1,0 +1,212 @@
+# Thunder Flat Model Deployment Configuration
+# v2.0 - Refactored for consistency and clarity
+
+robot:
+  # 关节配置 - 严格按照训练时的配置
+  joint_names:
+    - "FL_hip_joint"
+    - "FL_thigh_joint" 
+    - "FL_calf_joint"
+    - "FR_hip_joint"
+    - "FR_thigh_joint"
+    - "FR_calf_joint"
+    - "RL_hip_joint"
+    - "RL_thigh_joint"
+    - "RL_calf_joint"
+    - "RR_hip_joint"
+    - "RR_thigh_joint"
+    - "RR_calf_joint"
+    - "FL_foot_joint"  # 轮子关节
+    - "FR_foot_joint"  # 轮子关节
+    - "RL_foot_joint"  # 轮子关节
+    - "RR_foot_joint"  # 轮子关节
+
+  # 默认关节位置 (弧度) - 与训练时一致
+  default_joint_pos:
+    - 0.0    # FL_hip
+    - 0.7    # FL_thigh
+    - -1.5   # FL_calf
+    - 0.0    # FR_hip
+    - -0.7   # FR_thigh
+    - 1.5    # FR_calf
+    - 0.0    # RL_hip
+    - -0.7   # RL_thigh
+    - 1.5    # RL_calf
+    - 0.0    # RR_hip
+    - 0.7    # RR_thigh
+    - -1.5   # RR_calf
+    - 0.0    # FL_wheel
+    - 0.0    # FR_wheel
+    - 0.0    # RL_wheel
+    - 0.0    # RR_wheel
+
+  # 控制频率
+  control_frequency: 50.0    # Hz - 硬件控制频率 
+  policy_frequency: 50.0     # Hz - 策略推理频率 (与训练时一致)
+
+# 观测配置 - 与训练时完全一致
+observations:
+  # 观测缩放因子
+  scales:
+    base_ang_vel: 0.25        # 基座角速度缩放
+    projected_gravity: 1.0    # 重力投影向量 (无缩放)
+    velocity_commands: 1.0    # 速度指令 (无缩放)
+    joint_pos: 1.0           # 关节位置 (无缩放)
+    joint_vel: 0.05          # 关节速度缩放
+    actions: 1.0             # 动作 (无缩放)
+
+  # 观测限幅范围
+  clip_range: [-100.0, 100.0]
+
+  # 观测维度 (57维)
+  observation_dim: 57
+  # 经验归一化 (Empirical Normalization)
+  # 如果训练时使用了 empirical_normalization = True，则应启用此项
+  normalization:
+    enabled: false
+    # mean 和 std 向量应从训练好的模型检查点中导出
+    # 维度必须为57
+    mean: []
+    std: []
+
+  # 观测项说明:
+  # base_ang_vel (3) + projected_gravity (3) + velocity_commands (3) +
+  # joint_pos (16, 轮子设为0) + joint_vel (16) + actions (16) = 57
+
+# 动作配置 - 与训练时完全一致
+actions:
+  # 动作缩放因子 (严格按照训练配置)
+  scales:
+    hip_joints: 0.125      # .*_hip_joint 缩放
+    other_joints: 0.25     # ^(?!.*_hip_joint).* 缩放 (thigh + calf)
+    wheel_joints: 5.0      # .*_foot_joint 缩放 (速度控制)
+
+  # 动作限幅范围 (神经网络输出范围)
+  clip_range: [-1.0, 1.0]
+
+  # 动作维度
+  action_dim: 16
+
+# 安全配置
+safety:
+  # 关节位置限制 (弧度)
+  joint_pos_limits:
+    hip: [-0.6, 0.6]           # Hip关节限制
+    thigh: [-3.14159, 3.14159] # Thigh关节限制
+    calf: [-3.14159, 3.14159]  # Calf关节限制
+    wheel: [-1000.0, 1000.0]   # 轮子关节 (连续旋转)
+
+  # 关节速度限制 (弧度/秒)
+  joint_vel_limits:
+    leg: [-21.0, 21.0]         # 腿部关节速度限制
+    wheel: [-20.4, 20.4]       # 轮子速度限制
+
+  # 关节扭矩限制 (牛·米) - 用于扭矩控制模式
+  max_position_error: 0.5      # 最大位置误差 (弧度)
+  max_velocity: 25.0           # 最大速度 (弧度/秒)
+  emergency_stop_enabled: true # 是否启用紧急停止
+
+  # 姿态安全参数
+  max_tilt_angle: 45.0         # 最大倾斜角度 (度)
+  max_acceleration: 50.0       # 最大加速度 (m/s²)
+
+# 速度指令配置
+commands:
+  # 默认速度指令
+  default_lin_vel_x: 0.0       # 默认前进速度 (m/s)
+  default_lin_vel_y: 0.0       # 默认侧向速度 (m/s)
+  default_ang_vel_z: 0.0       # 默认角速度 (rad/s)
+
+  # 速度指令限制 (与训练环境完全一致)
+  min_lin_vel_x: 0.0           # 最小前进速度 (训练时不支持倒退)
+  max_lin_vel_x: 1.5           # 最大前进速度
+  min_lin_vel_y: -0.8          # 最小侧向速度
+  max_lin_vel_y: 0.8           # 最大侧向速度
+  min_ang_vel_z: -1.5          # 最小角速度
+  max_ang_vel_z: 1.5           # 最大角速度
+
+# 硬件接口配置
+hardware:
+  # 通信参数
+  communication_timeout: 0.1    # 通信超时 (秒)
+  max_retries: 3               # 最大重试次数
+  
+# 状态接收器配置
+state_receiver:
+  # 接收频率
+  receive_frequency: 200
+  buffer_size: 100
+  receive_timeout: 0.1
+
+  # Motor state server settings
+  motor_server_host: '192.168.66.159'
+  motor_server_port: 12345
+  
+  # IMU settings (nested under state_receiver)
+  imu:
+    enabled: true
+    serial_port: '/dev/ttyUSB0'
+    baud_rate: 115200
+    update_frequency: 200
+    buffer_size: 100
+    data_timeout: 0.5
+    validate_data: true
+
+# 日志配置
+logging:
+  level: "INFO"                # 日志级别: DEBUG, INFO, WARNING, ERROR
+  log_to_file: true           # 是否记录到文件
+  log_file: "logs/thunder_flat_deploy.log"
+  max_log_size: 10485760      # 最大日志文件大小 (10MB)
+  backup_count: 5             # 保留的日志文件数量
+
+# 性能监控
+monitoring:
+  enable_performance_monitor: true  # 是否启用性能监控
+  log_frequency: 50                # 性能日志频率 (每N步记录一次)
+  
+  # 监控指标
+  metrics:
+    - "control_loop_time"          # 控制循环时间
+    - "inference_time"             # 推理时间
+    - "observation_processing_time" # 观测处理时间
+    - "action_processing_time"     # 动作处理时间
+    - "hardware_communication_time" # 硬件通信时间
+
+# 调试选项
+debug:
+  enable_debug_output: false   # 是否启用调试输出
+  save_debug_data: false      # 是否保存调试数据
+  debug_data_dir: "debug_data" # 调试数据保存目录
+  
+  # 调试可视化
+  enable_visualization: false  # 是否启用可视化 (需要GUI环境)
+  visualization_frequency: 10  # 可视化更新频率 (Hz)
+
+# 实验配置
+experiment:
+  name: "thunder_flat_deployment"  # 实验名称
+  description: "Thunder轮足机器人Flat环境模型部署测试"
+  save_trajectories: false    # 是否保存轨迹数据
+  trajectory_save_dir: "trajectories"
+
+# 模型配置
+model:
+  # 模型文件路径 (相对于部署目录)
+  model_path: "exported/policy.pt"
+  
+  # 模型验证
+  validate_model_on_load: true    # 加载时验证模型
+  expected_input_dim: 57          # 期望输入维度
+  expected_output_dim: 16         # 期望输出维度
+  
+  # 推理优化
+  inference_device: "cpu"         # 推理设备: "cpu" 或 "cuda"
+
+# Control Configuration - PD gains and other control parameters
+control:
+  pd_gains:
+    kp: [80, 80, 80]      # Proportional gains for [hip, thigh, calf]
+    kd: [4, 4, 4]        # Derivative gains for [hip, thigh, calf]
+    wheel_kp: 30.0         # Proportional gain for wheels
+    wheel_kd: 1.0          # Derivative gain for wheels
